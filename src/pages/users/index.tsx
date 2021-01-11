@@ -1,6 +1,6 @@
 import { GetStaticProps } from "next";
 import Link from "next/link";
-
+import { useQuery } from 'react-query'
 import { User } from "../../interfaces";
 import { sampleUserData } from "../../utils/sample-data";
 import Layout from "../../components/Layout";
@@ -9,22 +9,31 @@ import List from "../../components/List";
 type Props = {
   items: User[];
 };
+const fetchEvents = async () => {
+  const res = await fetch(process.env.NEXT_PUBLIC_EVENTS_URL ?? '');
+  return res.json();
+}
 
-const WithStaticProps = ({ items }: Props) => (
-  <Layout title="Users List | Next.js + TypeScript Example">
-    <h1>Users List</h1>
-    <p>
-      Example fetching data from inside <code>getStaticProps()</code>.
-    </p>
-    <p>You are currently on: /users</p>
-    <List items={items} />
-    <p>
-      <Link href="/">
-        <a>Go home</a>
-      </Link>
-    </p>
-  </Layout>
-);
+const WithStaticProps = ({ items }: Props) => {
+  const { data, status, error } = useQuery("events", fetchEvents);
+  console.log({ data, status, error })
+  return (
+    <Layout title="Users List | Next.js + TypeScript Example">
+      <h1>Users List</h1>
+      <pre>{JSON.stringify(data)}</pre>
+      <p>
+        Example fetching data from inside <code>getStaticProps()</code>.
+        </p>
+      <p>You are currently on: /users</p>
+      <List items={items} />
+      <p>
+        <Link href="/">
+          <a>Go home</a>
+        </Link>
+      </p>
+    </Layout>
+  )
+};
 
 export const getStaticProps: GetStaticProps = async () => {
   // Example for including static props in a Next.js function component page.
