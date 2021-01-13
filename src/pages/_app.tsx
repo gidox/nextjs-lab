@@ -4,6 +4,8 @@ import {
   QueryClient,
   QueryClientProvider,
 } from 'react-query'
+import '../styles/styles.css'
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
